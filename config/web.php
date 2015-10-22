@@ -4,8 +4,13 @@ $params = require(__DIR__ . '/params.php');
 
 $config = [
     'id' => 'basic',
+    'name' => 'Yii2 приложение',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'layout' => 'basic',
+    'defaultRoute' => 'main/index',
+    'language' => 'ru_RU',
+    'charset' => 'UTF-8',
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
@@ -17,6 +22,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+            'loginUrl' => ['main/login']
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -38,6 +44,48 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'enableStrictParsing' => true,
+            'rules' => [
+                [
+                    'pattern' => '',
+                    'route' => 'main/index',
+                    'suffix' => ''
+                ],
+                [
+                    'pattern' => 'найти-<search:\w*>-<year:\d{4}>',
+                    'route' => 'main/search',
+                    'suffix' => '.html'
+                ],
+                [
+                    'pattern' => 'найти-<search:\w*>',
+                    'route' => 'main/search',
+                    'suffix' => '.html'
+                ],
+                [
+                    'pattern' => '<controller>/<action>/<id:\d+>',
+                    'route' => '<controller>/<action>',
+                    'suffix' => ''
+                ],
+                [
+                    'pattern' => '<controller>/<action>',
+                    'route' => '<controller>/<action>',
+                    'suffix' => '.html'
+                ],
+                [
+                    'pattern' => '<module>/<controller>/<action>/<id:\d+>',
+                    'route' => '<module>/<controller>/<action>',
+                    'suffix' => ''
+                ],
+                [
+                    'pattern' => '<module>/<controller>/<action>',
+                    'route' => '<module>/<controller>/<action>',
+                    'suffix' => '.html'
+                ],
+            ],
+        ],
     ],
     'params' => $params,
 ];

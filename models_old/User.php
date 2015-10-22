@@ -7,33 +7,33 @@ use yii\web\IdentityInterface;
 use yii\behaviors\TimestampBehavior;
 
 /**
- * This is the model class for table "user".
+ * This is the model class for table "{{%users}}".
  *
  * @property integer $id
  * @property string $username
  * @property string $email
- * @property string $password_hash
+ * @property string $password
  * @property integer $status
+ * @property integer $id_role
  * @property string $auth_key
- * @property integer $created_at
- * @property integer $updated_at
- * @property string $secret_key
- *
- * @property Profile $profile
+ * @property integer $block
+ * @property integer $create
+ * @property integer $update
+ * @property integer $views_phone
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_NOT_ACTIVE = 1;
     const STATUS_ACTIVE = 10;
-
+    
     public $password;
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'user';
+        return '{{%users}}'; //????????????????????????????????????????????????????????????????????????????????????????????????('User')
     }
 
     /**
@@ -59,36 +59,32 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'id' => 'Код',
             'username' => 'Логин',
-            'email' => 'Email',
+            'email' => 'E-mail',
             'password' => 'Пароль',
             'status' => 'Статус',
+            'id_role' => 'Роль',
             'auth_key' => 'Аутентификационный ключ',
+            'block' => 'Блок',
             'create' => 'Дата создания',
             'update' => 'Дата изменения',
+            'views_phone' => 'Просмотр телефона',
         ];
     }
-
     /* Связи */
     public function getProfile()
     {
         return $this->hasOne(Profile::className(), ['user_id' => 'id']);
     }
 
-//    /* Поведения */
-//    public function behaviors()
-//    {
-//        
-//        return [
-//            [
-//                'class' => TimestampBehavior::className(),
-//                'createdAtAttribute' => 'create',
-//                'updatedAtAttribute' => 'update',
-//                //'value' => new Expression('NOW()'),
-//            ],
-//        ];
-//    } 
+    /* Поведения */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className()
+        ];
+    }
 
     /* Поиск */
 
@@ -200,21 +196,5 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function validateAuthKey($authKey)
     {
         return $this->auth_key === $authKey;
-    }
-    
-    public function beforeSave($insert) {
-        if (parent::beforeSave($insert)) {
-            if($this->isNewRecord){
-                $this->create = time();
-                $this->update = time();
-                //$this->status = self::STATUS_NOT_ACTIVE;;
-            }
-            else {
-                $this->update = time();
-            }
-            return true;
-        } else {
-            return false;
-        }
     }
 }
